@@ -120,7 +120,7 @@ app.error(error => {
   console.log("⚡️ Bolt app is running!");
 
   // Start automatic polling if POLL_INTERVAL is set
-  const pollInterval = parseInt(process.env.POLL_INTERVAL || 300); // default 5 minutes (in seconds)
+  const pollInterval = parseInt(process.env.POLL_INTERVAL || 60); // default 1 minute (in seconds)
   if (pollInterval > 0) {
     console.log(`🔄 Auto-polling enabled: checking Steam status every ${pollInterval} seconds`);
     

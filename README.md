@@ -26,7 +26,7 @@ This app uses the [Bolt for Slack](https://slack.dev/bolt/concepts) framework.
   - `SLACK_SIGNING_SECRET=<your Slack app's signing secret>`
   - `STEAM_API_KEY=<your Steam API key>`
   - `STEAM_ID=<your numeric Steam ID>`
-  - `POLL_INTERVAL=<optional: polling interval in seconds, default 300 (5 minutes)>`
+  - `POLL_INTERVAL=<optional: polling interval in seconds, default 60 (1 minute)>`
 
 ## Custom Emoji (Optional)
 
@@ -41,9 +41,10 @@ To add a custom Steam emoji:
 
 ### Automatic Polling (Recommended)
 
-By default, the app automatically checks your Steam status every 5 minutes (300 seconds). You can customize this interval by setting the `POLL_INTERVAL` environment variable in your `.env` file:
+By default, the app automatically checks your Steam status every minute (60 seconds). You can customize this interval by setting the `POLL_INTERVAL` environment variable in your `.env` file:
 
 ```bash
+POLL_INTERVAL=60   # Check every minute (in seconds)
 POLL_INTERVAL=300  # Check every 5 minutes (in seconds)
 ```
 
