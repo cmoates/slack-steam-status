@@ -32,7 +32,7 @@ This app uses the [Bolt for Slack](https://slack.dev/bolt/concepts) framework.
 By default, the app uses a `:steam:` emoji for your game status. If this custom emoji is not available in your Slack workspace, the app will automatically fall back to the `:video_game:` emoji.
 
 To add a custom Steam emoji:
-1. Download the [Steam logo](https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/512px-Steam_icon_logo.svg.png)
+1. Download a Steam logo image (search for "steam logo icon" or use the official Steam branding assets)
 2. In Slack, go to your workspace → Customize → Add Custom Emoji
 3. Upload the image and name it `steam`
 
