@@ -2,10 +2,10 @@ require("dotenv").config();
 const { App, ExpressReceiver } = require("@slack/bolt");
 const axios = require("axios");
 
-const expressReceiver = new ExpressReceiver({});
+const expressReceiver = new ExpressReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET
+});
 const app = new App({
-  // authorize: oauth.authorize,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
   token: process.env.SLACK_USER_TOKEN,
   receiver: expressReceiver,
   logLevel: "DEBUG"
@@ -32,7 +32,7 @@ express.get("/ping", async (req, res) => {
 
   if (gameInfo) {
     const key = gameInfo.toLowerCase().replace(" ", "-");
-    const emoji = emojis[key] || ":video_game:";
+    const emoji = emojis[key] || ":steam:";
     await setStatus(gameInfo, emoji);
   }
 
@@ -48,7 +48,7 @@ express.get("/ping", async (req, res) => {
 // check if the current Slack status is a game status
 const isGameStatus = status => {
   const key = status.emoji.replace(/:/g, '')
-  return status.text.startsWith('playing') && (status.emoji === ":video_game:" || emojis[key]);
+  return status.text.startsWith('playing') && (status.emoji === ":steam:" || status.emoji === ":video_game:" || emojis[key]);
 };
 
 const getSlackStatus = async () => {
@@ -72,13 +72,28 @@ const unsetStatus = async () => {
 };
 
 const setStatus = async (gameInfo, emoji) => {
-  await app.client.users.profile.set({
-    token: process.env.SLACK_USER_TOKEN,
-    profile: {
-      status_text: `playing ${gameInfo}`,
-      status_emoji: `${emoji}`
+  try {
+    await app.client.users.profile.set({
+      token: process.env.SLACK_USER_TOKEN,
+      profile: {
+        status_text: `playing ${gameInfo}`,
+        status_emoji: `${emoji}`
+      }
+    });
+  } catch (error) {
+    // If emoji fails (e.g., :steam: not available), fallback to :video_game:
+    if (error.data?.error === 'profile_status_set_failed_not_valid_emoji') {
+      await app.client.users.profile.set({
+        token: process.env.SLACK_USER_TOKEN,
+        profile: {
+          status_text: `playing ${gameInfo}`,
+          status_emoji: `:video_game:`
+        }
+      });
+    } else {
+      throw error;
     }
-  });
+  }
 };
 
 const getSteamStatus = async () => {

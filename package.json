@@ -11,12 +11,11 @@
   "author": "David Pichsenmeister",
   "license": "MIT",
   "dependencies": {
-    "@slack/bolt": "^1.8.0",
-    "axios": "^0.19.2",
-    "dotenv": "^8.2.0",
-    "firebase-admin": "^8.9.2"
+    "@slack/bolt": "^4.7.3",
+    "axios": "^1.17.0",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^3.1.14"
   }
 }
