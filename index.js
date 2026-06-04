@@ -25,8 +25,8 @@ express.get('/id', async (req, res) => {
   return res.send(result.data.response.steamid)
 })
 
-// ping function to keep glitch alive
-express.get("/ping", async (req, res) => {
+// Core function to check Steam status and update Slack
+const updateSlackStatus = async () => {
   console.log("<3");
   const gameInfo = await getSteamStatus();
 
@@ -41,7 +41,11 @@ express.get("/ping", async (req, res) => {
     // only unset status if it's a game status
     if (isGameStatus(status)) await unsetStatus();
   }
+};
 
+// ping endpoint for manual triggering
+express.get("/ping", async (req, res) => {
+  await updateSlackStatus();
   return res.send("pong");
 });
 
@@ -114,4 +118,20 @@ app.error(error => {
   await app.start(process.env.PORT || 3000);
 
   console.log("⚡️ Bolt app is running!");
+
+  // Start automatic polling if POLL_INTERVAL is set
+  const pollInterval = parseInt(process.env.POLL_INTERVAL || 300); // default 5 minutes (in seconds)
+  if (pollInterval > 0) {
+    console.log(`🔄 Auto-polling enabled: checking Steam status every ${pollInterval} seconds`);
+    
+    // Run once immediately
+    updateSlackStatus().catch(err => console.error("Polling error:", err));
+    
+    // Then set up interval
+    setInterval(() => {
+      updateSlackStatus().catch(err => console.error("Polling error:", err));
+    }, pollInterval * 1000); // convert seconds to milliseconds
+  } else {
+    console.log("⏸️  Auto-polling disabled. Use /ping endpoint to manually update status.");
+  }
 })();

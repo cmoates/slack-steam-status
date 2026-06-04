@@ -26,6 +26,7 @@ This app uses the [Bolt for Slack](https://slack.dev/bolt/concepts) framework.
   - `SLACK_SIGNING_SECRET=<your Slack app's signing secret>`
   - `STEAM_API_KEY=<your Steam API key>`
   - `STEAM_ID=<your numeric Steam ID>`
+  - `POLL_INTERVAL=<optional: polling interval in seconds, default 300 (5 minutes)>`
 
 ## Custom Emoji (Optional)
 
@@ -38,6 +39,22 @@ To add a custom Steam emoji:
 
 ## Usage
 
-The app exposes a `/ping` endpoint that checks your current Steam status and updates your Slack profile accordingly. Set up a cron job or external service to ping this endpoint regularly (e.g., every 5 minutes) to keep your Slack status in sync with your Steam activity.
+### Automatic Polling (Recommended)
+
+By default, the app automatically checks your Steam status every 5 minutes (300 seconds). You can customize this interval by setting the `POLL_INTERVAL` environment variable in your `.env` file:
+
+```bash
+POLL_INTERVAL=300  # Check every 5 minutes (in seconds)
+```
+
+To disable automatic polling, set `POLL_INTERVAL=0`. The app will then only update your status when the `/ping` endpoint is called.
+
+### Manual Triggering
+
+The app also exposes a `/ping` endpoint that manually checks your current Steam status and updates your Slack profile. You can use this with external services like cron jobs or monitoring tools:
+
+```bash
+curl http://localhost:3000/ping
+```
 
 **Note:** Make sure your Steam profile is set to "Online" (not "Invisible" or "Offline") for the app to detect your game activity.
