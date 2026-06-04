@@ -34,7 +34,7 @@ By default, the app uses a `:steam:` emoji for your game status. If this custom 
 To add a custom Steam emoji:
 1. Download a Steam logo image (search for "steam logo icon" or use the official Steam branding assets)
 2. In Slack, go to your workspace → Customize → Add Custom Emoji
-3. Upload the image and name it `steam`
+3. Upload the image and name it `:steam:`
 
 ## Usage
 
