@@ -22,13 +22,74 @@ Based on [slack-steam-status](https://github.com/pichsenmeister/slack-steam-stat
 
 ## Run the app
 
+### Environment variables
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `SLACK_USER_TOKEN` | Yes | Slack user token with profile read/write scopes |
+| `SLACK_SIGNING_SECRET` | Yes | Slack app signing secret |
+| `STEAM_API_KEY` | Yes | Steam Web API key |
+| `STEAM_ID` | Yes | Your numeric Steam ID |
+| `POLL_INTERVAL` | No | Polling interval in seconds (default `60`). Set to `0` to disable |
+| `PORT` | No | HTTP port (default `3000`) |
+
+For local development, copy `.env.example` to `.env` and fill in your values. The app loads `.env` only when `NODE_ENV` is not `production`. Docker and Kubernetes should inject these as environment variables instead.
+
+### Local (Node.js)
+
 1. Install dependencies via `npm` or `yarn`
-2. Create a `.env` file and with following keys
-  - `SLACK_USER_TOKEN=<your Slack app's user token>`
-  - `SLACK_SIGNING_SECRET=<your Slack app's signing secret>`
-  - `STEAM_API_KEY=<your Steam API key>`
-  - `STEAM_ID=<your numeric Steam ID>`
-  - `POLL_INTERVAL=<optional: polling interval in seconds, default 60 (1 minute)>`
+2. Copy `.env.example` to `.env` and set the required values
+3. Run `npm start` or `npm run dev`
+
+### Docker Compose
+
+```bash
+cp .env.example .env
+# edit .env with your credentials
+
+docker compose up -d --build
+```
+
+The service listens on port 3000. Use `/health` for a no-op health check and `/ping` to trigger a manual status update.
+
+### Helm (Kubernetes / k3s)
+
+Build and load the image into your cluster (or push to a registry your cluster can pull from):
+
+```bash
+docker build -t slack-steam-status:latest .
+# k3s example:
+docker save slack-steam-status:latest | sudo k3s ctr images import -
+```
+
+Create a secret with your credentials:
+
+```bash
+kubectl create namespace slack-steam-status
+
+kubectl create secret generic slack-steam-status \
+  --namespace slack-steam-status \
+  --from-literal=SLACK_USER_TOKEN='xoxp-...' \
+  --from-literal=SLACK_SIGNING_SECRET='...' \
+  --from-literal=STEAM_API_KEY='...' \
+  --from-literal=STEAM_ID='...'
+```
+
+Install the chart:
+
+```bash
+helm install slack-steam-status ./helm/slack-steam-status \
+  --namespace slack-steam-status
+```
+
+The chart defaults to `secret.existingSecret: slack-steam-status` and runs a single replica. To have Helm create the secret instead (not recommended for production), set `secret.create: true` and pass the credential values.
+
+Optional port-forward for setup or manual triggers:
+
+```bash
+kubectl port-forward -n slack-steam-status svc/slack-steam-status 3000:3000
+curl http://localhost:3000/id?username=<your-steam-name>
+```
 
 ## Custom Emoji (Optional)
 

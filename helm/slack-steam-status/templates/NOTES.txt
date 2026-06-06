@@ -1,0 +1,16 @@
+slack-steam-status has been deployed.
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+The app polls Steam and updates your Slack status. Run a single replica only.
+
+To look up your Steam ID (one-time setup):
+  kubectl port-forward svc/{{ include "slack-steam-status.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+  curl "http://localhost:{{ .Values.service.port }}/id?username=<your-steam-name>"
+
+Health check:
+  curl http://localhost:{{ .Values.service.port }}/health
+
+Manual status update:
+  curl http://localhost:{{ .Values.service.port }}/ping

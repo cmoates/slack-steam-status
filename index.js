@@ -1,4 +1,7 @@
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
 const { App, ExpressReceiver } = require("@slack/bolt");
 const axios = require("axios");
 
@@ -17,6 +20,10 @@ const emojis = {
 };
 
 const express = expressReceiver.app;
+
+express.get("/health", (_req, res) => {
+  res.status(200).send("ok");
+});
 
 express.get('/id', async (req, res) => {
   const username = req.query.username

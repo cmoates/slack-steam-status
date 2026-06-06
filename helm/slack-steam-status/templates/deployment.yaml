@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "slack-steam-status.fullname" . }}
+  labels:
+    {{- include "slack-steam-status.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "slack-steam-status.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "slack-steam-status.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.env.port | int }}
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: {{ .Values.env.port | quote }}
+            - name: POLL_INTERVAL
+              value: {{ .Values.env.pollInterval | quote }}
+            - name: SLACK_USER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "slack-steam-status.secretName" . }}
+                  key: SLACK_USER_TOKEN
+            - name: SLACK_SIGNING_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "slack-steam-status.secretName" . }}
+                  key: SLACK_SIGNING_SECRET
+            - name: STEAM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "slack-steam-status.secretName" . }}
+                  key: STEAM_API_KEY
+            - name: STEAM_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "slack-steam-status.secretName" . }}
+                  key: STEAM_ID
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
