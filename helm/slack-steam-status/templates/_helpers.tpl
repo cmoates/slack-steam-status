@@ -29,9 +29,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{- define "slack-steam-status.secretName" -}}
-{{- if .Values.secret.existingSecret }}
-{{- .Values.secret.existingSecret }}
-{{- else }}
+{{- if .Values.secret.create }}
 {{- include "slack-steam-status.fullname" . }}
+{{- else }}
+{{- .Values.secret.existingSecret }}
 {{- end }}
 {{- end }}
