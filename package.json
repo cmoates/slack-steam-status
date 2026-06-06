@@ -1,15 +1,19 @@
 {
-  "name": "stickers",
+  "name": "slack-steam-status",
   "version": "1.0.0",
-  "description": "",
+  "description": "Slack app that updates your status to the game you are playing on Steam",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "author": "David Pichsenmeister",
+  "author": "cmoates",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmoates/slack-steam-status.git"
+  },
   "dependencies": {
     "@slack/bolt": "^4.7.3",
     "axios": "^1.17.0",

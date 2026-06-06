@@ -4,6 +4,8 @@ A simple Slack app that updates your Slack status to the game you currently play
 
 This app uses the [Bolt for Slack](https://slack.dev/bolt/concepts) framework.
 
+Based on [slack-steam-status](https://github.com/pichsenmeister/slack-steam-status) by [David Pichsenmeister](https://github.com/pichsenmeister).
+
 ## Steam configuration
 
 1. Get a Steam API key [here](https://steamcommunity.com/dev/apikey)
