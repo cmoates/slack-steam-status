@@ -1,0 +1,6 @@
+apiVersion: v2
+name: slack-steam-status
+description: Updates Slack status based on the game you are playing on Steam
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: slack-steam-status
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  pollInterval: "60"
+  port: "3000"
+
+# Create a Kubernetes Secret from the values below, or reference an existing one.
+secret:
+  create: false
+  existingSecret: slack-steam-status
+  slackUserToken: ""
+  slackSigningSecret: ""
+  steamApiKey: ""
+  steamId: ""
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
